@@ -81,7 +81,7 @@ class PointsController {
 
         await trx.commit();
 
-        return res.json({ status: "deu certo meu amigo !!", ...point });
+        return res.json({ status: "success", message: "Ponto cadastrado com sucesso", ...point });
     }
 
 }
