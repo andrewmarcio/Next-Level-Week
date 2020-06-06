@@ -77,11 +77,15 @@ class PointsController {
             };
         });
 
-        await trx('point_items').insert(pointItemRequest);
+        const registredPointItems = await trx('point_items').insert(pointItemRequest);
 
         await trx.commit();
 
-        return res.json({ status: "success", message: "Ponto cadastrado com sucesso", ...point });
+        if (registredPointItems) {
+            return res.json({ status: "success", message: "Ponto de coleta cadastrado com sucesso,"});
+        }else{
+            return res.json({ status: "error", message: "Erro ao cadastrar ponto de coleta."});
+        }
     }
 
 }

@@ -205,22 +205,18 @@
     display: none;
 }
 
-.not-scroll {
-    overflow-y: hidden;
-}
-
 #message-success {
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
     z-index: 99;
-    flex: 1;
-    /* display: flex; */
     position: fixed;
     background: #0E0A14;
     opacity: 0.95;
     text-align: center;
+    transition: opacity 1.5s linear;
+    animation: message-fade 0.3s;
 }
 
 #message-success img {
@@ -233,4 +229,13 @@
 #message-success span {
     color: #fff;
     font-size: 30px;
+}
+
+@keyframes message-fade {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 0.95;
+    }
 }

@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 
 import Header from '../../componentes/Header';
-import SuccessMessage from '../../componentes/SuccessMessage';
+import LogMessage from '../../componentes/LogMessage';
 import api from '../../services/api';
 import './style.css';
 
@@ -29,7 +29,9 @@ const CreatePoint = () => {
     const [items, setItems] = useState<Item[]>([]);
     const [ufs, setIUfs] = useState<string[]>([]); 
     const [cities, setCities] = useState<string[]>([]);
-    const [messageSuccess, setMessaSuccess] = useState<string>('');
+    const [status, setStatus] = useState<string>('');
+    const [message, setMessage] = useState<string>('');
+
     const [initialMapArea, setInitialMapArea] = useState<[number,number]>([-15.8172633, -47.8807876]);
     const [formData, setFormData] = useState({
         name: '',
@@ -141,20 +143,31 @@ const CreatePoint = () => {
 
         const pointregistred = await api.post('points', data);
         
-        if (pointregistred.data.status) {
-            setMessaSuccess(pointregistred.data.status); 
-            setTimeout(()=>{ history.push('/'); }, 1500);  
+        console.log(pointregistred);
+        
+        if (pointregistred.data.status === 'success') {
+            setStatus(pointregistred.data.status);
+            setMessage(pointregistred.data.message); 
+            setTimeout(()=>{
+                 history.push('/');
+            }, 1500);  
+        }else{
+            setStatus(pointregistred.data.status);
+            setMessage(pointregistred.data.message); 
+            setTimeout(()=>{
+                setStatus('');
+                setMessage(''); 
+            }, 1500); 
         }
     }
 
     return (
         <div id="page-create-point">
-            <SuccessMessage status={messageSuccess}/>
+            <LogMessage status={status} message={message}/>
             <div className="container">
                 <Header icon={icons.faArrowLeft} headerRedirectText="Retornar a Home" redirect="/" />
                 <form onSubmit={handleSubmit}>
-                    <h1>Cadastro do <br />ponto de coleta</h1>
-
+                    <h1>Cadastro do <br />ponto de coleta</h1>                    
 
                     <fieldset>
                         <legend>
