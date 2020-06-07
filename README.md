@@ -12,6 +12,7 @@ O projeto __Ecoleta__ tem como objetivo mostrar aos usuários locais nos quais p
 - Expo
 - Celebrate (para validações)
 - Axios
+- Knex
 
 #### Mobile
 
