@@ -18,24 +18,37 @@ class PointsController {
             .distinct()
             .select('points.*');
 
-        return res.json(points);
+            
+        const serializedPoints = points.map(point => {
+            return {
+                ...points,
+                img_url: `http://192.168.0.124:3333/uploads/image-points/${point.image}`
+            };
+        });
+            
+        return res.json(serializedPoints);
     }
 
     async show(req : Request, res: Response) {
         const {id} = req.params;
     
         const point = await knex('points').where('id', id).first();
-    
+        
         if(!point){
             return res.status(400).json({ message : "Ponto não foi encontrado!"});
         }
-    
+
+        const serializedPoints = {
+                ...point,
+                img_url: `http://192.168.0.124:3333/uploads/image-points/${point.image}`
+        };
+
         const items = await knex('items')
             .join('point_items', 'items.id', '=' ,'point_items.item_id')
             .where('point_items.point_id', id);
         
             return res.json({
-                point : point,
+                point : serializedPoints,
                 items : items
             });
     }
@@ -56,7 +69,7 @@ class PointsController {
         const trx = await knex.transaction();
 
         const point = {
-            image: "https://images.unsplash.com/photo-1580913428023-02c695666d61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60",
+            image: req.file.filename,
             name,
             email,
             whatsapp,
@@ -70,7 +83,10 @@ class PointsController {
 
         const point_id = pointResgistred[0];
 
-        const pointItemRequest = items.map((item_id: number) => {
+        const pointItemRequest = items
+        .split(',')
+        .map((item: string) => Number(item.trim()))
+        .map((item_id: number) => {
             return {
                 item_id,
                 point_id,
@@ -82,7 +98,7 @@ class PointsController {
         await trx.commit();
 
         if (registredPointItems) {
-            return res.json({ status: "success", message: "Ponto de coleta cadastrado com sucesso,"});
+            return res.json({ status: "success", message: "Ponto de coleta cadastrado com sucesso.", data: point});
         }else{
             return res.json({ status: "error", message: "Erro ao cadastrar ponto de coleta."});
         }
